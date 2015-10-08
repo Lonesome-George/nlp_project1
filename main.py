@@ -2,7 +2,7 @@
 
 #1.分词
 #2.去除停用词
-#3.将剩余的词集用于训练模型
+#3.使用剩余的词集训练模型
 
 import jieba
 import nltk.classify.util
@@ -31,7 +31,7 @@ def bigram_word_feats(words, score_fn=BigramAssocMeasures.chi_sq, n=200):
     return dict([(ngram, True) for ngram in itertools.chain(words, bigrams)])
 
 #main
-filename = "D:/Workspace/Yan/NLP/Training/TrainingSet50.txt"
+filename = "./Training/TrainingSet50.txt"
 stopset = {}.fromkeys([ line.rstrip() for line in open('./stop_words.txt') ])#读取停用词集
 posfeats = []
 negfeats = []
