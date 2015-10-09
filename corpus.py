@@ -16,8 +16,8 @@ class corpora:
     classifier = 0
 
     def __init__(self):
-    	# self.docset = heapq()
-    	self.classifier = simple_model()
+        # self.docset = heapq()
+        self.classifier = simple_model()
 
     def readtxt(self):
         f = file(self.rawset_filename, 'r')
@@ -36,8 +36,8 @@ class corpora:
         return sp_list[0], sp_list[1]
 
     def save_ndocs(self, n):
-    	docs = heapq.nsmallest(n, self.docset) #此处好像并不是按正负向概率之差的绝对值排的序
-    	f = open(self.nset_filename, 'w')
-    	for doc in docs:
-    		f.write(doc[0].encode("utf-8"))
-    	f.close()
+        docs = heapq.nsmallest(n, self.docset, key=lambda s: s[1])
+        f = open(self.nset_filename, 'w')
+        for doc in docs:
+            f.write(doc[0].encode("utf-8"))
+        f.close()
