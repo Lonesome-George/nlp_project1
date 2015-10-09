@@ -36,7 +36,7 @@ class corpora:
         return sp_list[0], sp_list[1]
 
     def save_ndocs(self, n):
-    	docs = heapq.nsmallest(n, self.docset)
+    	docs = heapq.nsmallest(n, self.docset) #此处好像并不是按正负向概率之差的绝对值排的序
     	f = open(self.nset_filename, 'w')
     	for doc in docs:
     		f.write(doc[0].encode("utf-8"))
