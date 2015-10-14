@@ -1,7 +1,7 @@
 #encoding=utf-8
 
 #选择语料
-#选取正负向概率之差的绝对值最小的200条语料
+#选取正负向概率之差的绝对值最小的n条语料
 
 import os
 from simple_model import simple_model
@@ -13,6 +13,7 @@ class corpora:
     rawset_filename = "./Training/RawTrainingSet10000.txt"
     chosen_dir = "./Training/ChosenSet"
     chosen_prefix = "SelectedTrainingSet50"
+    chosen_indices = "./Training/ChosenIndices.txt"
     # 可以创建一个文件保存所有已选中的语料序号
     docset = []
     max_pos_prob = 0
@@ -24,16 +25,30 @@ class corpora:
         self.classifier = simple_model()
 
     def read_txt(self):
-        f = file(self.rawset_filename, 'r')
+        # 读取已经选中的文本序号
+        chosen_indices = []
+        fi = 0
+        try:
+            fi = file(self.chosen_indices, 'r')
+            idx_list = fi.readline().split('\t')
+            for idx in idx_list:
+                chosen_indices.append(idx)
+            fi.close()
+            print chosen_indices
+        except IOError:
+            pass
+        # 读取rawset文档
+        fr = file(self.rawset_filename, 'r')
         while True:
-            line = f.readline().decode("utf-8")
+            line = fr.readline().decode("utf-8")
             if len(line) == 0: # Zero length indicates EOF
                 break
             index,text = self.proc_line(line)
-            probs = self.classifier.classify(text)
-            doc = [index, text, math.fabs(probs[1] - probs[0])]
-            heapq.heappush(self.docset, doc)
-        f.close()
+            if index not in chosen_indices:
+                probs = self.classifier.classify(text)
+                doc = [index, text, math.fabs(probs[1] - probs[0])]
+                heapq.heappush(self.docset, doc)
+        fr.close()
 
     def proc_line(self, line):
         sp_list = line.split('\t')
@@ -42,11 +57,14 @@ class corpora:
     def save_ndocs(self, n):
         docs = heapq.nsmallest(n, self.docset, key=lambda s: s[2])
         filename = self.find_filename(self.chosen_dir, self.chosen_prefix)
-        f = open(filename, 'w')
+        fd = open(filename, 'w')
+        fi = open(self.chosen_indices, 'a')
         for doc in docs:
             string = doc[0] + '\t1\t' + doc[1]
-            f.write(string.encode("utf-8"))
-        f.close()
+            fd.write(string.encode("utf-8"))
+            fi.write(str(doc[0]) + '\t')
+        fd.close()
+        fi.close()
 
     # 在指定目录下查找一个可用的文件名（格式为SelectedTrainingSet50_#.txt）
     def find_filename(self, dirname, prefix):
