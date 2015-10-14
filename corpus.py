@@ -13,7 +13,7 @@ class corpora:
     rawset_filename = "./Training/RawTrainingSet10000.txt"
     chosen_dir = "./Training/ChosenSet"
     chosen_prefix = "SelectedTrainingSet50"
-    chosen_indices = "./Training/ChosenIndices.txt" # 保存已经选中的文本序号
+    chosen_indices = "./Training/ChosenSet/ChosenIndices.txt" # 保存已经选中的文本序号
     docset = []
     max_pos_prob = 0
     classifier = 0

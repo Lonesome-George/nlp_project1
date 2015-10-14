@@ -17,6 +17,7 @@ class simple_model:
 
     initial_file = "./Training/TrainingSet50.txt"
     chosen_dir = "./Training/ChosenSet"
+    chosen_prefix = "SelectedTrainingSet50"
     stopset = {}.fromkeys([ line.rstrip() for line in open('./stop_words.txt') ])#读取停用词集
     
     def __init__(self):
@@ -24,7 +25,8 @@ class simple_model:
         training_files.append(self.initial_file)
         for parent,dirnames,filenames in os.walk(self.chosen_dir):
             for filename in filenames:
-                training_files.append(os.path.join(parent, filename))
+                if filename.startswith(self.chosen_prefix): # 忽略不以prefix为前缀的文件
+                    training_files.append(os.path.join(parent, filename))
         trainfeats, target = self.extract_features(training_files)
         # trainfeats, target = self.bigram_features(filename)
         # print 'train on %d instances' % (len(trainfeats))
