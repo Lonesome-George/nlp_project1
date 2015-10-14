@@ -2,5 +2,5 @@
 
 from corpus import corpora
 cp = corpora()
-cp.readtxt()
-cp.save_ndocs(200)
+cp.read_txt()
+cp.save_ndocs(50)
