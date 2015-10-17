@@ -30,7 +30,7 @@ input:	[id	label	text](不包含中括号，下同)
 output:	[id	label	pped_text]
 2.特征词提取
 input:	[id	label	pped_text]
-output:	[id	label word,freq;word,freq]
+output:	[id	label word,freq;word,freq...]
 3.权重计算和分类
 input:	[id	label word,freq;word,freq]
 output:	[id	label vector]

@@ -54,7 +54,7 @@ class corpora:
         return sp_list[0], sp_list[1]
 
     def save_ndocs(self, n):
-        docs = heapq.nsmallest(n, self.docset, key=lambda s: s[2])
+        docs = heapq.nsmallest(n, self.docset, key=lambda x:x[2])
         filename = self.find_filename(self.chosen_dir, self.chosen_prefix)
         fd = open(filename, 'w')
         fi = open(self.chosen_indices, 'a')
