@@ -50,6 +50,11 @@ def word_freq(filenames, stopset):
             string = word + '\n'
             f.write(string.encode("utf-8"))
         f.close()
+        # 将词频保存至文件中
+        f = open('./Training/FreqSet.txt', 'w')
+        for i in range(2):
+            for word in freqset[2]:
+                
     return wordset, freqset
 
 # 对于某一类，使用标准CHI算法计算每个单词的得分

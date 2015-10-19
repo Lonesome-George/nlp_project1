@@ -36,7 +36,7 @@ if __name__ == '__main__':
     #     emotionset.append(text.split(',')[0])
     stopset = read_stopset('./Dict/stop_words.txt')
     emotionset = read_emotionset('./Dict/emotion_words.csv')
-    wordset, freqset = ef.word_freq(['./Training/TrainingSet50.txt'], stopset)
+    wordset, freqset = ef.word_freq(['./Training/TrainingSet50_cleaned.txt'], stopset)
     # scores = ef.std_chi_scores(wordset, freqset)
     scores = ef.opt_chi_scores(wordset, freqset, emotionset)
     ex_freqset = ef.extract_features(freqset, scores, 100)
