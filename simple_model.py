@@ -81,6 +81,7 @@ class simple_model:
         return sp_list[1], sp_list[2]
 
     def tokenize(self, text):
+        text = text.rstrip('\n') # 去除行尾的换行符
         seg_list = list(jieba.cut(text, cut_all=False))# 精确模式
         return seg_list
 

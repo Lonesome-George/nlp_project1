@@ -9,7 +9,7 @@ chosen_prefix = "SelectedTrainingSet50"
 # 分词并统计每篇文本的单词词频
 def word_freq(filenames, stopset):
     wordset = set()   # 全部单词集
-    freqset = [[],[]] # 分别保存负向和正向文本的词频
+    freqset_list = [[],[]] # 分别保存负向和正向文本的词频
     npos = 0 # 当前正向文本的数目
     nneg = 0 # 当前负向文本的数目
     icur = 0 # 当前所指向的正向或负向文本的下标
@@ -24,12 +24,12 @@ def word_freq(filenames, stopset):
             doc = [id, label, dict()] # 用列表记录每篇文本的id,label和词频
             if label == '1':
                 index = 1
-                freqset[1].append(doc)
+                freqset_list[1].append(doc)
                 icur = npos
                 npos += 1
             elif label == '-1':
                 index = 0
-                freqset[0].append(doc)
+                freqset_list[0].append(doc)
                 icur = nneg
                 nneg += 1
             else:
@@ -39,10 +39,10 @@ def word_freq(filenames, stopset):
             token_list = del_stopwords(token_list, stopset)
             for token in token_list:
                 wordset.add(token) # 将单词加入全部单词集
-                if freqset[index][icur][2].has_key(token):
-                    freqset[index][icur][2][token] += 1
+                if freqset_list[index][icur][2].has_key(token):
+                    freqset_list[index][icur][2][token] += 1
                 else:
-                    freqset[index][icur][2][token] = 1
+                    freqset_list[index][icur][2][token] = 1
         fr.close()
         # 将特征词保存至文件中
         f = open('./Training/WordSet.txt', 'w')
@@ -50,26 +50,32 @@ def word_freq(filenames, stopset):
             string = word + '\n'
             f.write(string.encode("utf-8"))
         f.close()
-        # 将词频保存至文件中
-        f = open('./Training/FreqSet.txt', 'w')
+        # 将词频列表按id排序
+
+        # 将原始词频保存至文件中
+        f = open('./Training/WordFreq_Orig.txt', 'w')
         for i in range(2):
-            for word in freqset[2]:
-                
-    return wordset, freqset
+            for freqset in freqset_list[i]:
+                string = freqset[0] + '\t' + freqset[1] + '\t'
+                for word in freqset[2]:
+                    string += word + ',' + str(freqset[2][word]) + ';'
+                string += '\n'
+                f.write(string.encode('utf-8'))
+    return wordset, freqset_list
 
 # 对于某一类，使用标准CHI算法计算每个单词的得分
-def std_chi_scores(wordset, freqset): # freqset[0]表示负向文本词频，freqset[1]表示正向文本词频
+def std_chi_scores(wordset, freqset_list): # freqset[0]表示负向文本词频，freqset[1]表示正向文本词频
     scores = dict()
     for word in wordset:
         A = B = C = D = 0 # A表示包含词w并且属于类c的微博条数，B表示包含词w但不属于类c的微博条数，
         # C表示不包含词w并且属于类c的微博条数，D表示不包含词w并且不属于类c的微博条数。
         # 遍历词频集
-        for fq in freqset[0]:
+        for fq in freqset_list[0]:
             if fq[2].has_key(word):
                 B += 1
             else:
                 D += 1
-        for fq in freqset[1]:
+        for fq in freqset_list[1]:
             if fq[2].has_key(word):
                 A += 1
             else:
@@ -79,7 +85,7 @@ def std_chi_scores(wordset, freqset): # freqset[0]表示负向文本词频，fre
     return scores
 
 # 对于某一类，使用优化的CHI算法计算每个单词的得分（考虑情感词）
-def opt_chi_scores(wordset, freqset, emotionset):
+def opt_chi_scores(wordset, freqset_list, emotionset):
     emo_scores = dict()    # 情感词的得分
     nonemo_scores = dict() # 非情感词的得分
     nonemo_total_score = 0 # 非情感词的总得分
@@ -88,12 +94,12 @@ def opt_chi_scores(wordset, freqset, emotionset):
         A = B = C = D = 0 # A表示包含词w并且属于类c的微博条数，B表示包含词w但不属于类c的微博条数，
         # C表示不包含词w并且属于类c的微博条数，D表示不包含词w并且不属于类c的微博条数。
         # 遍历词频集
-        for fq in freqset[0]:
+        for fq in freqset_list[0]:
             if fq[2].has_key(word):
                 B += 1
             else:
                 D += 1
-        for fq in freqset[1]:
+        for fq in freqset_list[1]:
             if fq[2].has_key(word):
                 A += 1
             else:
@@ -112,7 +118,7 @@ def opt_chi_scores(wordset, freqset, emotionset):
     return dict(emo_scores.items() + nonemo_scores.items())
 
 # 抽取CHI值最高的n个特征词，并保存至文件中，格式为[id	label word,freq;word,freq...]
-def extract_features(freqset, scores, n):
+def extract_features(freqset_list, scores, n):
     # # 对CHI值进行排序
     # scores = sorted(scores.iteritems(), key=lambda x:x[1], reverse=True)
     # 取得分最高的n个特征词
@@ -120,14 +126,14 @@ def extract_features(freqset, scores, n):
     ex_freqset = [[],[]] # 抽取出来的特征词频，ex_freqs[0]表示负向文本词频，ex_freqs[1]表示正向文本词频
     # 遍历词频集
     for i in range(2):
-        for fq in freqset[i]:
+        for fq in freqset_list[i]:
             doc = [fq[0], fq[1], dict()]
             for word in fq[2]:
                 if word_dict.has_key(word): # 判断该单词是否是选出来的特征词
                     doc[2][word] = fq[2][word]
             ex_freqset[i].append(doc)
-    # 将特征向量保存至文件中
-    f = open('./Training/FeatureVector.txt', 'w')
+    # 将选中的词及其频率保存至文件中
+    f = open('./Training/WordFreq.txt', 'w')
     for i in range(2):
         for fq in ex_freqset[i]:
             string = fq[0] + '\t' + fq[1] + '\t'
@@ -143,11 +149,11 @@ def proc_line(line):
     return sp_list[0], sp_list[1], sp_list[2]
 
 def tokenize(text):
+    text = text.rstrip('\n') # 去除行尾的换行符
     seg_list = list(jieba.cut(text, cut_all=False))# 精确模式
     # 去除单词前后的空格，如果整个单词是由空格构成则删除
     seg_newlist = []
     for seg in seg_list:
-        # seg.strip()
         if seg != ' ':
             seg_newlist.append(seg)
     return seg_newlist
