@@ -5,6 +5,7 @@
 
 import os
 from simple_model import simple_model
+from svm_model import svm_model
 import math
 import heapq
 
@@ -21,7 +22,8 @@ class corpora:
     def __init__(self):
         if os.path.isdir(self.chosen_dir) == False:
             os.mkdir(self.chosen_dir)
-        self.classifier = simple_model()
+        # self.classifier = simple_model()
+        self.classifier = svm_model()
 
     def read_txt(self):
         # 读取已经选中的文本序号

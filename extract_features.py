@@ -1,6 +1,6 @@
 #encoding=utf-8
 
-import jieba
+from utils import tokenize, del_stopwords, stat_wordfreq
 import heapq
 
 src_dir = "./Training/ChosenSet"
@@ -20,8 +20,18 @@ def word_freq(filenames, stopset):
             if len(line) == 0: # Zero length indicates EOF
                 break
             id,label,text = proc_line(line)
+            token_list = tokenize(text)
+            token_list = del_stopwords(token_list, stopset)
+            wordfreq_dict = {}
+            for token in token_list:
+                wordset.add(token) # 将单词加入全部单词集
+                if wordfreq_dict.has_key(token):
+                    wordfreq_dict[token] += 1
+                else:
+                    wordfreq_dict[token] = 1
+            doc = [id, label, wordfreq_dict] # 用列表记录每篇文本的id,label和词频
+            # 将文本加入指定列表
             index = 0
-            doc = [id, label, dict()] # 用列表记录每篇文本的id,label和词频
             if label == '1':
                 index = 1
                 freqset_list[1].append(doc)
@@ -35,14 +45,6 @@ def word_freq(filenames, stopset):
             else:
                 print 'tag-unknown text'
                 continue
-            token_list = tokenize(text)
-            token_list = del_stopwords(token_list, stopset)
-            for token in token_list:
-                wordset.add(token) # 将单词加入全部单词集
-                if freqset_list[index][icur][2].has_key(token):
-                    freqset_list[index][icur][2][token] += 1
-                else:
-                    freqset_list[index][icur][2][token] = 1
         fr.close()
         # 将特征词保存至文件中
         f = open('./Training/WordSet.txt', 'w')
@@ -147,20 +149,3 @@ def extract_features(freqset_list, scores, n):
 def proc_line(line):
     sp_list = line.split('\t')
     return sp_list[0], sp_list[1], sp_list[2]
-
-def tokenize(text):
-    text = text.rstrip('\n') # 去除行尾的换行符
-    seg_list = list(jieba.cut(text, cut_all=False))# 精确模式
-    # 去除单词前后的空格，如果整个单词是由空格构成则删除
-    seg_newlist = []
-    for seg in seg_list:
-        if seg != ' ':
-            seg_newlist.append(seg)
-    return seg_newlist
-
-def del_stopwords(word_list, stopset):
-    word_newlist = []
-    for word in word_list:
-        if word not in stopset:
-            word_newlist.append(word)
-    return word_newlist
