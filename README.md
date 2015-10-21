@@ -2,14 +2,15 @@
 nlp_project1
 
 IMPORTANT!
+To Predict:
+1.运行extract_features.py抽取特征词，特征词的数目可以在代码中修改；
+2.运行weight.py计算特征词的权重；
+3.运行main_pred.py预测文本极性。
+每次预测新文本集时只要运行main_pred.py即可。
+To Choose Corpora:
 1.Remove all files under the directory "Training/ChosenSet";
-2.Run main.py for 4 times, and you can get 200 weibo texts under the above directory;(Suppose all texts are positive now.)
+2.Run main_select_corpus.py, and you can get 50 weibo texts under the above directory;
+3.Label the chosen texts, and go back to 2.
 
-NEXT TO DO:
-1.Make the code more elegant;
-2.Write a good feature_extraction function;
 
 Zhuangbi in English is so cool!::::)
-接下来要做的：
-1.写几个特征提取函数，逐个测试调优；
-2.人工标注，现在只是代码中强制设置每一条微博的极性为positive，方便测试。

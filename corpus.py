@@ -46,7 +46,7 @@ class corpora:
                 break
             index,text = self.proc_line(line)
             if index not in chosen_indices:
-                probs = self.classifier.classify(text)
+                probs = self.classifier.classify_proba(text)
                 doc = [index, text, math.fabs(probs[1] - probs[0])]
                 heapq.heappush(self.docset, doc)
         fr.close()
@@ -61,7 +61,7 @@ class corpora:
         fd = open(filename, 'w')
         fi = open(self.chosen_indices, 'a')
         for doc in docs:
-            string = doc[0] + '\t1\t' + doc[1]
+            string = doc[0] + '\t\t' + doc[1]
             fd.write(string.encode("utf-8"))
             fi.write(str(doc[0]) + '\t')
         fd.close()

@@ -32,7 +32,7 @@ output:	[id	label	pped_text]
 input:	[id	label	pped_text]
 output:	[id	label word,freq;word,freq...]
 3.权重计算和分类
-input:	[id	label word,freq;word,freq]
+input:	[id	label word,weight;word,weight]
 output:	[id	label vector]
 4.模型训练
 input:	[id	label vector]

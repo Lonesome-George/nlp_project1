@@ -41,6 +41,7 @@ def tfidfs(file_in, tfidf_file_out, idf_file_out):
             tfidf = tf_dict[term] * idf_dict[term]
             tfidf_dict[term] = tfidf
             string += term + ',' + str(tfidf) + ";"
+            # string += term + ',' + str(1) + ";" # for test
         doc_tfidf_list.append([id, label, tfidf_dict])
         # 写入文件
         string += '\n'
@@ -65,7 +66,7 @@ def tfidf(wordfreq_dict, idf_dict):
         if idf_dict.has_key(word): # 去除训练集中不包含的单词
             freq = int(wordfreq_dict[word])
             weight = freq / nterm * idf_dict[word]
-            print weight
+            wg_dict[word] = weight
     return wg_dict
 
 def proc_line(line):
@@ -75,6 +76,8 @@ def proc_line(line):
 def tf(text, df_dict):
     tf_dict = {}
     text = text.rstrip(';\n') # 去除文本末尾的换行符和分号
+    if text == '':
+        return {}
     seg_list = text.split(';')
     nterm = 0 #term总数
     for seg in seg_list: # 统计term总数

@@ -5,7 +5,9 @@
 from utils import tokenize, del_stopwords, stat_wordfreq
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import SVC
-from weight2 import tfidf
+from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
+from sklearn.neighbors import NearestNeighbors
+from weight import tfidf
 
 class svm_model:
     vectorizer = 0
@@ -22,8 +24,7 @@ class svm_model:
         # 读取训练集
         training_files = []
         training_files.append(self.feature_file)
-        trainfeats, target = self.read_features(training_files)
-        # print trainfeats, labels
+        trainfeats, targets = self.read_features(training_files)
 
         # 读取idf值
         self.read_idf(self.idf_file)
@@ -31,10 +32,12 @@ class svm_model:
         # 训练模型
         # print 'train on %d instances' % (len(trainfeats))
         # self.classifier = SVC(probability=True)
-        self.classifier = SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, degree=3,
-                              gamma=0.0, kernel='rbf', max_iter=-1, probability=True, random_state=None,
-                              shrinking=True, tol=0.001, verbose=False)
-        self.classifier.fit(trainfeats, target)
+        # self.classifier = SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, degree=3,
+        #                       gamma=0.0, kernel='rbf', max_iter=-1, probability=True, random_state=None,
+        #                       shrinking=True, tol=0.001, verbose=False)
+        self.classifier = BernoulliNB()
+        print self.classifier
+        self.classifier.fit(trainfeats, targets)
 
     def read_features(self, filenames):
         trainfeats  = []
@@ -49,6 +52,7 @@ class svm_model:
                 trainfeats.append(self.word_feats(text))
                 targets.append(int(label))
             f.close()
+
         # 将dict转换成vector
         self.vectorizer = DictVectorizer()
         trainfeats = self.vectorizer.fit_transform(trainfeats).toarray()
@@ -77,8 +81,10 @@ class svm_model:
 
     # 读取特征词及其权重值
     def word_feats(self, text):
-        dictfeats = dict()
+        dictfeats = {}
         text = text.rstrip(';\n') # 去除行尾的换行符和分号
+        if text == '':
+            return {}
         seg_list = text.split(';')
         for seg in seg_list:
             sp_list = seg.split(',')
@@ -88,6 +94,14 @@ class svm_model:
         return dictfeats
 
     def classify(self, text):
+        token_list = tokenize(text)
+        token_list = del_stopwords(token_list, self.stopset)
+        wordfreq_dict = stat_wordfreq(token_list)
+        dictfeats = tfidf(wordfreq_dict, self.idf_dict)
+        vecfeats = self.vectorizer.transform(dictfeats).toarray()
+        return self.classifier.predict(vecfeats)
+
+    def classify_proba(self, text):
         token_list = tokenize(text)
         token_list = del_stopwords(token_list, self.stopset)
         wordfreq_dict = stat_wordfreq(token_list)
