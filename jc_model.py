@@ -9,7 +9,7 @@ from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
 from sklearn.neighbors import NearestNeighbors
 from weight import tfidf
 
-class svm_model:
+class jc_model:
     vectorizer = 0
     classifier = 0
 
@@ -30,11 +30,8 @@ class svm_model:
         self.read_idf(self.idf_file)
 
         # 训练模型
-        # print 'train on %d instances' % (len(trainfeats))
+        print 'train on %d instances' % (len(trainfeats))
         # self.classifier = SVC(probability=True)
-        # self.classifier = SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0, degree=3,
-        #                       gamma=0.0, kernel='rbf', max_iter=-1, probability=True, random_state=None,
-        #                       shrinking=True, tol=0.001, verbose=False)
         self.classifier = BernoulliNB()
         print self.classifier
         self.classifier.fit(trainfeats, targets)

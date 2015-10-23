@@ -100,11 +100,11 @@ class simple_model:
         token_list = self.tokenize(text)
         dictfeats = self.word_feats(token_list, self.stopset)
         vecfeats = self.vectorizer.transform(dictfeats).toarray()
-        # print self.classifier.predict(vecfeats)
+        return self.classifier.predict(vecfeats)
+
+    def classify_proba(self, text):
+        token_list = self.tokenize(text)
+        dictfeats = self.word_feats(token_list, self.stopset)
+        vecfeats = self.vectorizer.transform(dictfeats).toarray()
         prob = self.classifier.predict_proba(vecfeats)
-        # res = dict()
-        # res[self.pos] = prob.prob(self.pos)
-        # res[self.neg] = prob.prob(self.neg)
-        # return res
-        # print prob
         return prob[0]

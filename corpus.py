@@ -5,15 +5,15 @@
 
 import os
 from simple_model import simple_model
-from svm_model import svm_model
+from jc_model import jc_model
 import math
 import heapq
 
 class corpora:
     # trainset_filename = "./Training/TrainingSet50.txt"
-    rawset_filename = "./Training/RawTrainingSet10000.txt"
+    rawset_filename = "./Training/RawTrainingSet10000_cleaned_v2.txt"
     chosen_dir = "./Training/ChosenSet"
-    chosen_prefix = "SelectedTrainingSet50"
+    chosen_prefix = "SelectedTrainingSet30"
     chosen_indices = "./Training/ChosenSet/ChosenIndices.txt" # 保存已经选中的文本序号
     docset = []
     max_pos_prob = 0
@@ -23,7 +23,7 @@ class corpora:
         if os.path.isdir(self.chosen_dir) == False:
             os.mkdir(self.chosen_dir)
         # self.classifier = simple_model()
-        self.classifier = svm_model()
+        self.classifier = jc_model()
 
     def read_txt(self):
         # 读取已经选中的文本序号
@@ -31,11 +31,11 @@ class corpora:
         fi = 0
         try:
             fi = file(self.chosen_indices, 'r')
-            idx_list = fi.readline().split('\t')
+            line = fi.readline().rstrip('\n')
+            idx_list = line.split('\t')
             for idx in idx_list:
                 chosen_indices.append(idx)
             fi.close()
-            print chosen_indices
         except IOError:
             pass
         # 读取rawset文档
@@ -44,16 +44,20 @@ class corpora:
             line = fr.readline().decode("utf-8")
             if len(line) == 0: # Zero length indicates EOF
                 break
-            index,text = self.proc_line(line)
+            seg_list = self.proc_line(line)
+            if len(seg_list) == 1: # 预处理后文本为空
+                continue
+            index = seg_list[0]
+            text = seg_list[1]
             if index not in chosen_indices:
                 probs = self.classifier.classify_proba(text)
-                doc = [index, text, math.fabs(probs[1] - probs[0])]
+                doc = [index, text, math.fabs(probs[0] - probs[1])]
                 heapq.heappush(self.docset, doc)
         fr.close()
 
     def proc_line(self, line):
         sp_list = line.split('\t')
-        return sp_list[0], sp_list[1]
+        return sp_list
 
     def save_ndocs(self, n):
         docs = heapq.nsmallest(n, self.docset, key=lambda x:x[2])

@@ -37,3 +37,7 @@ output:	[id	label vector]
 4.模型训练
 input:	[id	label vector]
 output:	model
+
+
+选语料的策略：
+每次选30条，看到相关或者相似的就删除，直至选够200条。（因为每次选出来的都是基于一个主题）

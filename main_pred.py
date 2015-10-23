@@ -1,12 +1,16 @@
 #encoding=utf-8
 
-from svm_model import svm_model
+from simple_model import simple_model
+from jc_model import jc_model
 
-testset_file = './Training/testSet.txt'
+testset_file = './Training/TestSet/testSet.txt'
+# testset_file = './Training/TestSet/testSet2.txt'
+# testset_file = './Training/TestSet/testSet50.txt'
 # testset_file = './Training/TrainingSet50_cleaned.txt'
 
 if __name__ == '__main__':
-    model = svm_model()
+    model = jc_model()
+    # model = simple_model()
     f = file(testset_file, 'r')
     nright = 0
     while True:
@@ -15,12 +19,16 @@ if __name__ == '__main__':
             break
         line = line.rstrip()
         seg_list = line.split('\t')
+        id = seg_list[0]
         label = int(seg_list[1])
         text = seg_list[2]
         # print text
         pred_label = model.classify(text)
+        pred_right = False
         if label == pred_label:
             nright += 1
-        # print model.classify_proba(text)
+            # pred_right = True
+        else:
+            print 'pred_wrong ', id, label, model.classify_proba(text), text
     print 'num_right = ', nright
     f.close()
