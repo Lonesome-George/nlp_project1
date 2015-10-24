@@ -11,7 +11,7 @@ import heapq
 
 class corpora:
     # trainset_filename = "./Training/TrainingSet50.txt"
-    rawset_filename = "./Training/RawTrainingSet10000_cleaned_v2.txt"
+    rawset_filename = "./Training/RawTrainingSet10000_cleaned.txt"
     chosen_dir = "./Training/ChosenSet"
     chosen_prefix = "SelectedTrainingSet30"
     chosen_indices = "./Training/ChosenSet/ChosenIndices.txt" # 保存已经选中的文本序号

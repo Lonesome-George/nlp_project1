@@ -1,11 +1,10 @@
 #encoding=utf-8
 
-from utils import tokenize, del_stopwords
+from utils import stop_set, emotion_set, tokenize, del_stopwords
 import os
 import heapq
 
 chosen_dir = "./Training/ChosenSet"
-# chosen_prefix = "SelectedTrainingSet50"
 chosen_prefix = "SelectedTrainingSet30"
 
 # 分词并统计每篇文本的单词词频
@@ -169,41 +168,17 @@ def proc_line(line):
     sp_list = line.split('\t')
     return sp_list[0], sp_list[1], sp_list[2]
 
-def read_stopset(filename):
-    stopset = []
-    f = file(filename, 'r')
-    while True:
-        line = f.readline().decode("utf-8")
-        if len(line) == 0: # Zero length indicates EOF
-            break
-        stopset.append(line.rstrip())
-    f.close()
-    return stopset
-
-def read_emotionset(filename):
-    emotionset = []
-    f = file(filename, 'r')
-    while True:
-        line = f.readline().decode("utf-8")
-        if len(line) == 0: # Zero length indicates EOF
-            break
-        text = line.rstrip()
-        emotionset.append(text.split(',')[0])
-    f.close()
-    del emotionset[0] # 去除第一行，第一行是说明文字
-    return emotionset
-
 
 if __name__ == '__main__':
-    stopset = read_stopset('./Dict/stop_words.txt')
-    emotionset = read_emotionset('./Dict/emotion_words.csv')
-    training_files = ['./Training/TrainingSet50_cleaned_v2.txt']
-    for parent,dirnames,filenames in os.walk(chosen_dir):
-        for filename in filenames:
-            if filename.startswith(chosen_prefix): # 忽略不以prefix为前缀的文件
-                training_files.append(os.path.join(parent, filename))
-    # training_files = ['./Training/TestSet/TrainingSet4.txt'] # for test
+    stopset = stop_set('./Dict/stop_words.txt')
+    emotionset = emotion_set('./Dict/emotion_words.csv')
+    training_files = ['./Training/TrainingSet50_cleaned.txt']
+    # # add 200 more training texts
+    # for parent,dirnames,filenames in os.walk(chosen_dir):
+    #     for filename in filenames:
+    #         if filename.startswith(chosen_prefix): # 忽略不以prefix为前缀的文件
+    #             training_files.append(os.path.join(parent, filename))
     wordset, freqset_list = word_freq(training_files, stopset)
     # scores = ef.std_chi_scores(wordset, freqset_list)
     scores = opt_chi_scores(wordset, freqset_list, emotionset)
-    ex_freqset = extract_features(freqset_list, scores, 2400)
+    ex_freqset = extract_features(freqset_list, scores, 2500)

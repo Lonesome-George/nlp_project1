@@ -2,7 +2,7 @@
 
 #使用给定的特征向量训练SVM模型
 
-from utils import tokenize, del_stopwords, stat_wordfreq
+from utils import tokenize, del_stopwords, stat_wordfreq, print_list, print_dict
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
@@ -96,7 +96,10 @@ class jc_model:
         wordfreq_dict = stat_wordfreq(token_list)
         dictfeats = tfidf(wordfreq_dict, self.idf_dict)
         vecfeats = self.vectorizer.transform(dictfeats).toarray()
-        return self.classifier.predict(vecfeats)
+        # print_list(token_list)
+        # print_dict(wordfreq_dict)
+        # print_dict(dictfeats)
+        return self.classifier.predict(vecfeats)[0]
 
     def classify_proba(self, text):
         token_list = tokenize(text)
