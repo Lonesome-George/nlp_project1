@@ -64,6 +64,8 @@ def del_mark(text):
 
 if __name__ == '__main__':
 
+	# src_file = "./Training/TrainingSet50.txt"
+	# result_file = "./Training/TrainingSet50_cleaned.txt"
 	src_file = "./Training/RawTrainingSet10000.txt"
 	result_file = "./Training/RawTrainingSet10000_cleaned.txt"
 

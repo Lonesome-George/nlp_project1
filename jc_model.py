@@ -6,7 +6,6 @@ from utils import tokenize, del_stopwords, stat_wordfreq, print_list, print_dict
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
-from sklearn.neighbors import NearestNeighbors
 from weight import tfidf
 
 class jc_model:
@@ -18,7 +17,7 @@ class jc_model:
     chosen_dir = "./Training/ChosenSet"
     chosen_prefix = "SelectedTrainingSet50"
     idf_dict = {}
-    stopset = {}.fromkeys([ line.rstrip() for line in open('./Dict/stop_words.txt') ])#读取停用词集
+    stopset = {}.fromkeys([ line.rstrip() for line in open('./Dict/stop_words.txt') ])# 读取停用词集
 
     def __init__(self):
         # 读取训练集

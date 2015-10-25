@@ -2,7 +2,7 @@
 
 # predict corpus and save results to a file
 
-from cleaning import clean
+from preprocess import clean
 from jc_model import jc_model
 
 testset_file = '../TestSet/Test5000'
