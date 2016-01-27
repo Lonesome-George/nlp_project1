@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 # predict corpus and save results to a file
 

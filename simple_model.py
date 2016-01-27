@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 #使用50条语料训练出一个简单的模型
 #1.分词
@@ -19,7 +19,7 @@ class simple_model:
     chosen_dir = "./Training/ChosenSet"
     chosen_prefix = "SelectedTrainingSet50"
     stopset = {}.fromkeys([ line.rstrip() for line in open('./Dict/stop_words.txt') ])#读取停用词集
-    
+
     def __init__(self):
         training_files = []
         training_files.append(self.initial_file)

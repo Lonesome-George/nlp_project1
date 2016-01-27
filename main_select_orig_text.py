@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 # 根据多次选择的语料id从rawset中选出原始语料
 

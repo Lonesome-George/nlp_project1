@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 #注意设置文件的编码格式为utf-8
 
 # from simple_model import simple_model
@@ -23,5 +23,3 @@ if __name__ == '__main__':
     # print string
     seg_list = tokenize("fuck！手机通讯录和信息一开机就全没了！！fuck！！！死人三星！！fuck。")
     # print "Default Mode:", "/".join(seg_list)  # 精确模式
-
-

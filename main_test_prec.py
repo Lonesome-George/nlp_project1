@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 # 测试模型的正确率
 

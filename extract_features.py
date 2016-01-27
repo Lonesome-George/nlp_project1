@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 from utils import stop_set, emotion_set, tokenize, del_stopwords
 import os
