@@ -1,4 +1,4 @@
-#encoding=utf-8
+#coding:utf-8
 
 #选择语料
 #选取正负向概率之差的绝对值最小的n条语料
